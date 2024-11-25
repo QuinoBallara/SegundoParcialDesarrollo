@@ -8,7 +8,6 @@ type ImageSelectionProps = {
 }
 
 export default function CameraButton(props: ImageSelectionProps) {
-    const [image, setImage] = useState<string>();
 
     const takeImage = async () => {
         await ImagePicker.requestCameraPermissionsAsync()
