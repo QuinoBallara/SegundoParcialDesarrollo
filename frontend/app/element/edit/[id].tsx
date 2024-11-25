@@ -1,32 +1,33 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useElements } from '@/context/elementContext'
 import { useLocalSearchParams } from 'expo-router'
+import DropdownComponent from '@/components/Dropdown/Dropdown'
 
 const EditElement = () => {
     const [elementId, setElementId] = useState('')
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [moonNames, setMoonNames] = useState('')
-    const [image, setImage] = useState('')
+    const [selectedDifficulty, setSelectedDifficulty] = useState('')
+    const [isFavourite, setIsFavourite] = useState(false)
     const { editElement, elements } = useElements()
     const { id } = useLocalSearchParams()
+    const [isLoading, setIsLoading] = useState(true)
+
+    const difficulties = [{ value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }]
 
     const handleEdit = async () => {
-        if (name === '' || description === '' || moonNames === '' || image === '') {
+        if (name === '' || description === '') {
             alert('Please fill all fields')
             return
         }
-
-        let moonNamesArray = moonNames.split(',').map((moon) => moon.trim())
 
         const data = {
             id: elementId,
             name,
             description,
-            moons: moonNamesArray.length,
-            moon_names: moonNamesArray,
-            image,
+            difficulty: selectedDifficulty,
+            favourite: isFavourite
         }
 
         editElement(data);
@@ -37,10 +38,20 @@ const EditElement = () => {
         setElementId(element.id)
         setName(element.name)
         setDescription(element.description)
-        setMoonNames(element.moon_names.join(', '))
-        setImage(element.image)
-
+        setSelectedDifficulty(element.difficulty)
+        setIsFavourite(element.favourite)
+        setIsLoading(false)
     }, [])
+
+
+    if (isLoading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#000" />
+                <Text style={styles.loadingText}>Loading...</Text>
+            </View>
+        );
+    }
 
 
     return (
@@ -51,20 +62,12 @@ const EditElement = () => {
             <Text style={styles.text}>Description</Text>
             <TextInput placeholder='Description' value={description} onChangeText={setDescription} style={styles.input} />
 
-            <Text style={styles.text}>Moon names</Text>
-            <TextInput
-                value={moonNames}
-                onChangeText={setMoonNames}
-                style={styles.input}
-                placeholder='Separated by comma'
-            />
-
-            <Text style={styles.text}>Image (URL)</Text>
-            <TextInput placeholder='Image URL' value={image} onChangeText={setImage} style={styles.input} />
+            <Text style={styles.text}>Difficulty</Text>
+            <DropdownComponent data={difficulties} handleSelection={setSelectedDifficulty} value={selectedDifficulty} />
 
             <TouchableOpacity onPress={handleEdit} style={styles.button}>
                 <Text style={styles.text}>
-                    Edit Planet
+                    Edit Destination
                 </Text>
             </TouchableOpacity>
         </View>
@@ -72,6 +75,17 @@ const EditElement = () => {
 }
 
 const styles = StyleSheet.create({
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f0f0f0",
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: "#555",
+    },
     container: {
         flex: 1,
         justifyContent: 'flex-start',
@@ -80,6 +94,7 @@ const styles = StyleSheet.create({
         padding: 10,
         width: '100%',
         gap: 10,
+        marginTop: '30%'
     },
     input: {
         padding: 10,
@@ -95,7 +110,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         padding: 10,
         borderRadius: 20,
-        width: '35%',
+        width: '45%',
         alignSelf: 'center',
         textAlign: 'center',
     },

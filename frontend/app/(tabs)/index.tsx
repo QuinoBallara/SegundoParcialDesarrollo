@@ -3,10 +3,22 @@ import { Text, TouchableOpacity, View, Image, FlatList, StyleSheet, SafeAreaView
 import { router } from "expo-router";
 import { useElements } from "@/context/elementContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Star from "@/components/Star/Star";
+import Tag from "@/components/Tag/Tag";
 
 export default function Index() {
-  const { elements, getElements, deleteElement } = useElements();
+  const { elements, getElements, deleteElement, toggleFavourite } = useElements();
   const [isLoading, setIsLoading] = useState(true);
+
+  const filteredElements = useMemo(() => {
+    return elements
+      .slice()
+      .sort((a: any, b: any) => {
+        if (a.favourite && !b.favourite) return -1;
+        if (!a.favourite && b.favourite) return 1;
+        return a.name.localeCompare(b.name);
+      });
+  }, [elements]);
 
   useEffect(() => {
     const fetchElements = async () => {
@@ -29,28 +41,34 @@ export default function Index() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, marginTop: '10%' }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.content}>
+        <View style={{ flex: 1 }}>
           <FlatList
-            data={elements}
+            data={filteredElements}
             style={{ width: "100%" }}
             keyExtractor={(element) => element.id.toString()}
             renderItem={({ item: element }) => (
               <View style={styles.contentContainer}>
                 <GestureHandlerRootView>
+                  <View style={styles.star}>
+                    <TouchableOpacity key={element.id} onPress={() => { toggleFavourite(element.id); }}>
+                      <Star favourite={element.favourite} />
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
                     key={element.id}
                     onPress={() => router.push({ pathname: "/element/[id]", params: { id: element.id } })}
                     style={styles.container}
                   >
-                    <View style={styles.elementCard}>
+                    <View style={styles.headerCard}>
                       <Text style={styles.elementName}>{element.name}</Text>
-                      <Image
-                        source={{ uri: element.image || "https://via.placeholder.com/100" }}
-                        style={styles.elementImage}
-                      />
+                      <View style={styles.detsCard}>
+                        <Tag difficulty={element.difficulty} />
+                      </View>
                     </View>
+                    <Text style={styles.elementDescription}>{element.description}</Text>
+
                   </TouchableOpacity>
                 </GestureHandlerRootView>
               </View>
@@ -63,18 +81,26 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    padding: 10,
+  headerCard: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    marginBottom: 10
+  },
+  detsCard: {
+
+    flexDirection: 'column'
+  },
+  star: {
+    position: 'absolute',
+    right: 30,
+    top: 24,
+    zIndex: 1
   },
   contentContainer: {
     width: "100%",
-    alignContent: "center",
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: 'flex-start',
+    flexDirection: 'column'
   },
   loadingContainer: {
     flex: 1,
@@ -100,20 +126,19 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderColor: 'black',
     borderWidth: 1,
-  },
-  elementCard: {
-    alignItems: "center",
+    minWidth: '70%',
+    maxWidth: '70%',
   },
   elementName: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 6,
     color: "#333",
   },
-  elementImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
+  elementDescription: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: "#333",
   },
   deleteButton: {
     backgroundColor: "red",

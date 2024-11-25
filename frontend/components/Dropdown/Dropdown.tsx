@@ -6,10 +6,11 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 type DropdownComponentProps = {
     data: Array<{ label: string, value: string }>
     handleSelection: (value: string) => void
+    value?: string
 };
 
 const DropdownComponent = (props: DropdownComponentProps) => {
-    const [value, setValue] = useState('0');
+    const [value, setValue] = useState(props.value || '0');
     const [isFocus, setIsFocus] = useState(false);
 
     return (
@@ -21,7 +22,6 @@ const DropdownComponent = (props: DropdownComponentProps) => {
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
                 data={props.data}
-                search
                 maxHeight={300}
                 labelField="label"
                 valueField="value"

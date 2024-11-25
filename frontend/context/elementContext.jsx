@@ -11,7 +11,7 @@ export const ElementProvider = ({ children }) => {
 
     const getElements = async () => {
         try {
-            const response = await fetch(`${apiUrl}/planets`, {
+            const response = await fetch(`${apiUrl}/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ export const ElementProvider = ({ children }) => {
 
     const addElement = async (element) => {
         try {
-            const response = await fetch(`${apiUrl}/planets`, {
+            const response = await fetch(`${apiUrl}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export const ElementProvider = ({ children }) => {
 
             if (response.ok) {
                 alert('Planet added successfully')
-                getElements()
+                await getElements()
             } else {
                 alert('An error occurred')
             }
@@ -48,7 +48,7 @@ export const ElementProvider = ({ children }) => {
 
     const editElement = async (element) => {
         try {
-            const response = await fetch(`${apiUrl}/planets/${element.id}`, {
+            const response = await fetch(`${apiUrl}/${element.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const ElementProvider = ({ children }) => {
 
             if (response.ok) {
                 alert('Planet edited successfully')
-                setElements(getElements())
+                await getElements()
             } else {
                 alert('An error occurred')
             }
@@ -69,7 +69,7 @@ export const ElementProvider = ({ children }) => {
 
     const deleteElement = async (id) => {
         try {
-            const response = await fetch(`${apiUrl}/planets/${id}`, {
+            const response = await fetch(`${apiUrl}/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -87,8 +87,33 @@ export const ElementProvider = ({ children }) => {
         }
     }
 
+    const toggleFavourite = async (id) => {
+        console.log(id)
+        const newElement = elements.find(element => element.id === id)
+        console.log(newElement)
+        newElement.favourite = !newElement.favourite
+
+        try {
+            const response = await fetch(`${apiUrl}/${newElement.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newElement),
+            })
+
+            if (response.ok) {
+                await getElements()
+            } else {
+                alert('An error occurred')
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return (
-        <ElementContext.Provider value={{ elements, getElements, addElement, editElement, deleteElement, nextElementId }}>
+        <ElementContext.Provider value={{ elements, getElements, addElement, editElement, deleteElement, toggleFavourite, nextElementId }}>
             {children}
         </ElementContext.Provider>
     )

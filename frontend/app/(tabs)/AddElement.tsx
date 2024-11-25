@@ -3,29 +3,29 @@ import React, { useContext, useState } from 'react'
 import { ElementInfoType } from '@/types/elementInfo'
 import { apiUrl } from '@/constants/apiUrl'
 import { useElements } from '@/context/elementContext'
+import { Dropdown } from 'react-native-element-dropdown'
+import DropdownComponent from '@/components/Dropdown/Dropdown'
 
 const AddElement = () => {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [moonNames, setMoonNames] = useState('')
-    const [image, setImage] = useState('')
+    const [selectedDifficulty, setSelectedDifficulty] = useState('')
     const { addElement, nextElementId } = useElements()
 
+    const difficulties = [{ value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }]
+
     const handleUpload = async () => {
-        if (name === '' || description === '' || (moonNames.length === 0) || image === '') {
+        if (name === '' || description === '') {
             alert('Please fill all fields')
             return
         }
-
-        let moonsArray = moonNames.split(',').map((moon: string) => moon.trim())
 
         const data = {
             id: nextElementId,
             name,
             description,
-            moons: moonsArray.length,
-            moon_names: moonsArray,
-            image,
+            difficulty: selectedDifficulty,
+            favourite: false
         }
 
         addElement(data);
@@ -39,20 +39,12 @@ const AddElement = () => {
             <Text style={styles.text}>Description</Text>
             <TextInput placeholder='Description' value={description} onChangeText={setDescription} style={styles.input} />
 
-            <Text style={styles.text}>Moon names</Text>
-            <TextInput
-                value={moonNames}
-                onChangeText={setMoonNames}
-                style={styles.input}
-                placeholder='Separated by comma'
-            />
-
-            <Text style={styles.text}>Image (URL)</Text>
-            <TextInput placeholder='Image URL' value={image} onChangeText={setImage} style={styles.input} />
+            <Text style={styles.text}>Difficulty</Text>
+            <DropdownComponent data={difficulties} handleSelection={setSelectedDifficulty} />
 
             <TouchableOpacity onPress={handleUpload} style={styles.button}>
                 <Text style={styles.text}>
-                    Add Planet
+                    Add Destination
                 </Text>
             </TouchableOpacity>
         </View>
@@ -68,6 +60,7 @@ const styles = StyleSheet.create({
         padding: 10,
         width: '100%',
         gap: 10,
+        marginTop: '40%'
     },
     input: {
         padding: 10,
@@ -83,7 +76,7 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         padding: 10,
         borderRadius: 20,
-        width: '35%',
+        width: '45%',
         alignSelf: 'center',
         textAlign: 'center',
     },

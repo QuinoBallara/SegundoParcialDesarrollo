@@ -5,12 +5,14 @@ import { ElementInfoType } from '@/types/elementInfo'
 import { apiUrl } from '@/constants/apiUrl'
 import { useElements } from '@/context/elementContext'
 import { StyleSheet } from 'react-native'
+import Star from '@/components/Star/Star'
+import Tag from '@/components/Tag/Tag'
 
 const ElementDetails = () => {
     const { id } = useLocalSearchParams()
     const [isLoading, setIsLoading] = useState(true)
     const [elementInfo, setelementInfo] = useState<ElementInfoType | null>(null)
-    const { elements, deleteElement } = useElements()
+    const { elements, deleteElement, toggleFavourite } = useElements()
     const navigate = useNavigation()
 
     useEffect(() => {
@@ -43,88 +45,89 @@ const ElementDetails = () => {
             </View>
         )
     }
-
-    return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Image source={{ uri: elementInfo?.image }} style={styles.image} />
-                <Text style={styles.name}>{elementInfo?.name}</Text>
-            </View>
-            <View style={styles.details}>
-                <Text style={styles.detailText}>{elementInfo?.description}</Text>
-                {elementInfo?.moons === 0 ?
-                    <View>
-                        <Text style={styles.detailText}>This planet has no moons</Text>
+    if (elementInfo)
+        return (
+            <View style={styles.contentContainer}>
+                <View style={styles.star}>
+                    <TouchableOpacity key={id[0]} onPress={() => { toggleFavourite(id); }}>
+                        <Star favourite={elementInfo.favourite} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.container}>
+                    <View style={styles.headerCard}>
+                        <Text style={styles.elementName}>{elementInfo?.name}</Text>
+                        <View style={styles.detsCard}>
+                            <Tag difficulty={elementInfo.difficulty} />
+                        </View>
                     </View>
-                    : elementInfo?.moons === 1 ?
-                        <View>
-                            <Text style={styles.detailText}>This planet has 1 moon:</Text>
-                            <Text style={styles.detailText}>{elementInfo?.moon_names.join('\n')}</Text>
-                        </View>
-                        :
-                        <View>
-                            <Text style={styles.detailText}>This planet has {elementInfo?.moons} moons:</Text>
-                            <Text style={styles.detailText}>{elementInfo?.moon_names.join('\n')}</Text>
-                        </View>
-                }
+                    <Text style={styles.elementDescription}>{elementInfo?.description}</Text>
+                </View>
+                <View style={styles.buttons}>
+                    <TouchableOpacity onPress={() => router.push(`/element/edit/${id}`)} style={styles.button}>
+                        <Text style={styles.buttonText}>Edit</Text>
+                    </TouchableOpacity>
 
-            </View>
-            <View style={styles.buttons}>
-                <TouchableOpacity onPress={() => router.push(`/element/edit/${id}`)} style={styles.button}>
-                    <Text style={styles.buttonText}>Edit</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => handleDelete()} style={[styles.button, styles.deleteButton]}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-            </View>
-        </View >
-    )
+                    <TouchableOpacity onPress={() => handleDelete()} style={[styles.button, styles.deleteButton]}>
+                        <Text style={styles.deleteButtonText}>Delete</Text>
+                    </TouchableOpacity>
+                </View>
+            </View >
+        )
 }
 
 const styles = StyleSheet.create({
+    headerCard: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginBottom: 10
+    },
+    detsCard: {
+
+        flexDirection: 'column'
+    },
+    star: {
+        position: 'absolute',
+        right: 70,
+        top: 20,
+        zIndex: 1
+    },
+    contentContainer: {
+        width: "100%",
+        alignItems: "center",
+        justifyContent: 'flex-start',
+        flexDirection: 'column'
+    },
     container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
-        width: '85%',
-        alignSelf: 'center',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    image: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginRight: 20,
-    },
-    name: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    details: {
-        backgroundColor: '#fff',
-        padding: 20,
+        backgroundColor: "#fff",
         borderRadius: 10,
+        padding: 15,
+        marginVertical: 10,
+        marginHorizontal: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
         borderColor: 'black',
         borderWidth: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-        marginBottom: 20,
+        minWidth: '75%',
+        maxWidth: '75%',
     },
-    detailText: {
+    elementName: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 6,
+        color: "#333",
+    },
+    elementDescription: {
         fontSize: 16,
         marginBottom: 10,
+        color: "#333",
     },
     buttons: {
         flexDirection: 'row',
         justifyContent: 'space-around',
+        gap: 10
     },
     button: {
         backgroundColor: '#fff',
