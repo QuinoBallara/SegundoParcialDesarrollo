@@ -2,10 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Text, TouchableOpacity, View, Image, FlatList, StyleSheet, SafeAreaView, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import { useElements } from "@/context/elementContext";
-import DropdownComponent from "@/components/Dropdown/Dropdown";
-import ImageSelection from "@/components/ImagePicker/ImagePicker";
-import CameraButton from "@/components/Camera/CameraButton";
-import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function Index() {
   const { elements, getElements, deleteElement } = useElements();
@@ -19,17 +16,6 @@ export default function Index() {
 
     fetchElements();
   }, []);
-
-  const elementOptions = useMemo(() => [{ label: 'Any', value: '0' }, ...elements.map((element: any) => ({ label: element.name, value: element.id }))], [elements]);
-  const [selectedElement, setSelectedElement] = useState('0');
-  const filteredElements = useMemo(() => {
-    if (selectedElement === '0') return elements;
-    return elements.filter((element: any) => element.id.toString() === selectedElement);
-  }, [selectedElement, elements]);
-
-  const handleDelete = async (id: string) => {
-    await deleteElement(id);
-  }
 
   if (isLoading) {
     return (
@@ -46,38 +32,26 @@ export default function Index() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.content}>
-          <DropdownComponent data={elementOptions} handleSelection={setSelectedElement} />
           <FlatList
-            data={filteredElements}
+            data={elements}
             style={{ width: "100%" }}
             keyExtractor={(element) => element.id.toString()}
             renderItem={({ item: element }) => (
               <View style={styles.contentContainer}>
                 <GestureHandlerRootView>
-                  <Swipeable
-                    renderRightActions={() => (
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleDelete(element.id)}
-                      >
-                        <Text style={styles.deleteButtonText}>Delete</Text>
-                      </TouchableOpacity>
-                    )}
+                  <TouchableOpacity
+                    key={element.id}
+                    onPress={() => router.push({ pathname: "/element/[id]", params: { id: element.id } })}
+                    style={styles.container}
                   >
-                    <TouchableOpacity
-                      key={element.id}
-                      onPress={() => router.push({ pathname: "/element/[id]", params: { id: element.id } })}
-                      style={styles.container}
-                    >
-                      <View style={styles.elementCard}>
-                        <Text style={styles.elementName}>{element.name}</Text>
-                        <Image
-                          source={{ uri: element.image || "https://via.placeholder.com/100" }}
-                          style={styles.elementImage}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </Swipeable>
+                    <View style={styles.elementCard}>
+                      <Text style={styles.elementName}>{element.name}</Text>
+                      <Image
+                        source={{ uri: element.image || "https://via.placeholder.com/100" }}
+                        style={styles.elementImage}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 </GestureHandlerRootView>
               </View>
             )}
