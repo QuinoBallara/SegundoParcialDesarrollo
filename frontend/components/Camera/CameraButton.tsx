@@ -21,7 +21,7 @@ export default function CameraButton(props: ImageSelectionProps) {
                     quality: 1,
                 }).then((result) => {
                     if (!result.canceled) {
-                        setImage(result.assets[0].uri);
+                        props.handleUpload(result.assets[0].uri);
                     }
                 });
             } else {
