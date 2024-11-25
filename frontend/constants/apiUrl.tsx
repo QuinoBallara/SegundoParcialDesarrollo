@@ -1,1 +1,1 @@
-export const apiUrl = 'http://localhost:8000';
+export const apiUrl = 'http://161.35.143.238:8000/jballara';
