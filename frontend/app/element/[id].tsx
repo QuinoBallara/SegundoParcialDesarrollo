@@ -75,7 +75,7 @@ const ElementDetails = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => handleDelete()} style={[styles.button, styles.deleteButton]}>
-                    <Text style={styles.buttonText}>Delete</Text>
+                    <Text style={styles.deleteButtonText}>Delete</Text>
                 </TouchableOpacity>
             </View>
         </View >
@@ -127,21 +127,24 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#f5f5f5',
         padding: 10,
-        borderRadius: 5,
-        width: '24%',
+        borderRadius: 20,
+        width: '35%',
         alignItems: 'center',
         borderColor: 'black',
         borderWidth: 1,
     },
     buttonText: {
-        color: '#fff',
+        color: 'black',
         fontSize: 16,
     },
     deleteButton: {
         backgroundColor: '#dc3545',
     },
+    deleteButtonText: {
+        color: '#fff',
+    }
 });
 
 
