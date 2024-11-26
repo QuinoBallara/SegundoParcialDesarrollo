@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Text, TouchableOpacity, View, Image, FlatList, StyleSheet, SafeAreaView, ActivityIndicator } from "react-native";
+import { Text, TouchableOpacity, View, Image, FlatList, StyleSheet, SafeAreaView, ActivityIndicator, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import { useElements } from "@/context/elementContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -9,6 +9,7 @@ import Tag from "@/components/Tag/Tag";
 export default function Index() {
   const { elements, getElements, deleteElement, toggleFavourite } = useElements();
   const [isLoading, setIsLoading] = useState(true);
+  const { width } = useWindowDimensions();
 
   const filteredElements = useMemo(() => {
     return elements
@@ -41,7 +42,7 @@ export default function Index() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, marginTop: '10%' }}>
+    <GestureHandlerRootView style={{ flex: 1, marginTop: '10%', width: width }}>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           <FlatList

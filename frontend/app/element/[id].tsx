@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { ElementInfoType } from '@/types/elementInfo'
@@ -14,6 +14,7 @@ const ElementDetails = () => {
     const [elementInfo, setelementInfo] = useState<ElementInfoType | null>(null)
     const { elements, deleteElement, toggleFavourite } = useElements()
     const navigate = useNavigation()
+    const { width } = useWindowDimensions();
 
     useEffect(() => {
         navigate.setOptions({
@@ -47,7 +48,7 @@ const ElementDetails = () => {
     }
     if (elementInfo)
         return (
-            <View style={styles.contentContainer}>
+            <View style={[styles.contentContainer, { width: width }]}>
                 <View style={styles.star}>
                     <TouchableOpacity key={id[0]} onPress={() => { toggleFavourite(id); }}>
                         <Star favourite={elementInfo.favourite} />

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useElements } from '@/context/elementContext'
 import { useLocalSearchParams } from 'expo-router'
@@ -13,6 +13,7 @@ const EditElement = () => {
     const { editElement, elements } = useElements()
     const { id } = useLocalSearchParams()
     const [isLoading, setIsLoading] = useState(true)
+    const { width } = useWindowDimensions();
 
     const difficulties = [{ value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }]
 
@@ -55,7 +56,7 @@ const EditElement = () => {
 
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { width: width }]}>
             <Text style={styles.text}>Name</Text>
             <TextInput placeholder='Name' value={name} onChangeText={setName} style={styles.input} />
 

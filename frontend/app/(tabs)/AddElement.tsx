@@ -5,12 +5,14 @@ import { apiUrl } from '@/constants/apiUrl'
 import { useElements } from '@/context/elementContext'
 import { Dropdown } from 'react-native-element-dropdown'
 import DropdownComponent from '@/components/Dropdown/Dropdown'
+import { useWindowDimensions } from 'react-native'
 
 const AddElement = () => {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [selectedDifficulty, setSelectedDifficulty] = useState('')
     const { addElement, nextElementId } = useElements()
+    const { width } = useWindowDimensions();
 
     const difficulties = [{ value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }]
 
@@ -32,7 +34,7 @@ const AddElement = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { width: width }]}>
             <Text style={styles.text}>Name</Text>
             <TextInput placeholder='Name' value={name} onChangeText={setName} style={styles.input} />
 
@@ -58,7 +60,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f0f0f0',
         padding: 10,
-        width: '100%',
         gap: 10,
         marginTop: '40%'
     },

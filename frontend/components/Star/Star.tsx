@@ -18,7 +18,7 @@ const Star = (props: StarProps) => {
     } else {
         return (
             <View>
-                {props.favourite ? <AntDesign name="star" size={26} color="pink" /> : <AntDesign name="staro" size={26} color="pink" />}
+                {props.favourite ? <AntDesign name="heart" size={26} color="pink" /> : <AntDesign name="hearto" size={26} color="pink" />}
             </View>
         )
     }
